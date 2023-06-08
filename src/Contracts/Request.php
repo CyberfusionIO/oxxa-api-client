@@ -2,7 +2,7 @@
 
 namespace Cyberfusion\Oxxa\Contracts;
 
-interface Model
+interface Request
 {
     public function toArray(): array;
 }

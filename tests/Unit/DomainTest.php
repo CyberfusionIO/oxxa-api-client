@@ -3,6 +3,7 @@
 namespace Cyberfusion\Oxxa\Tests\Unit;
 
 use Carbon\Carbon;
+use Cyberfusion\Oxxa\Enum\DomainStatus;
 use Cyberfusion\Oxxa\Models\Domain;
 use Cyberfusion\Oxxa\Oxxa;
 use Cyberfusion\Oxxa\Requests\DomainListRequest;
@@ -113,12 +114,12 @@ class DomainTest extends TestCase
         $domain = new Domain();
         $domain->sld = 'example';
         $domain->tld = 'org';
-        $domain->{'identity-admin'} = 'ABCD123456';
-        $domain->{'identity-registrant'} = 'ABCD123456';
-        $domain->nsgroup = 'ABCD123456';
-        $domain->dnstemplate = 'ABCD123456';
+        $domain->identityAdmin = 'ABCD123456';
+        $domain->identityRegistrant = 'ABCD123456';
+        $domain->nameserverGroup = 'ABCD123456';
+        $domain->dnsTemplate = 'ABCD123456';
         $domain->lock = true;
-        $domain->execution_at = Carbon::createFromDate('2020', '01', '01');
+        $domain->executionAt = Carbon::createFromDate('2020', '01', '01');
 
         $registered = $this
             ->oxxa
@@ -152,12 +153,12 @@ class DomainTest extends TestCase
         $domain = new Domain();
         $domain->sld = 'example';
         $domain->tld = 'org';
-        $domain->{'identity-admin'} = 'ABCD123456';
-        $domain->{'identity-registrant'} = 'ABCD123456';
-        $domain->nsgroup = 'ABCD123456';
-        $domain->dnstemplate = 'ABCD123456';
+        $domain->identityAdmin = 'ABCD123456';
+        $domain->identityRegistrant = 'ABCD123456';
+        $domain->nameserverGroup = 'ABCD123456';
+        $domain->dnsTemplate = 'ABCD123456';
         $domain->lock = true;
-        $domain->execution_at = Carbon::createFromDate('2020', '01', '01');
+        $domain->executionAt = Carbon::createFromDate('2020', '01', '01');
 
         $transferred = $this
             ->oxxa
@@ -344,7 +345,7 @@ class DomainTest extends TestCase
         $domain = new Domain();
         $domain->sld = 'example';
         $domain->tld = 'org';
-        $domain->nsgroup = 'EFGH123456';
+        $domain->nameserverGroup = 'EFGH123456';
 
         $updated = $this
             ->oxxa
@@ -370,11 +371,11 @@ class DomainTest extends TestCase
 
         $request = new DomainListRequest();
         $request->tld = 'org';
-        $request->sortname = 'sld';
-        $request->sortorder = 'asc';
+        $request->sortName = 'sld';
+        $request->sortOrder = 'asc';
         $request->start = 0;
         $request->records = 2;
-        $request->status = Domain::STATUS_ACTIVE;
+        $request->status = DomainStatus::STATUS_ACTIVE;
         $domains = $this
             ->oxxa
             ->domain()

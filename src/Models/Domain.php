@@ -2,84 +2,55 @@
 
 namespace Cyberfusion\Oxxa\Models;
 
-use Cyberfusion\Oxxa\Contracts\Model as ModelContract;
+use Cyberfusion\Oxxa\Contracts\Model;
+use Cyberfusion\Oxxa\Support\ArrayHelper;
+use Cyberfusion\Oxxa\Traits\HasRequiredAttributes;
+use DateTimeInterface;
 
-class Domain extends Model implements ModelContract
+class Domain implements Model
 {
-    public const STATUS_ACTIVE = 'active';
+    use HasRequiredAttributes;
 
-    public const STATUS_QUARANTINE = 'quarantine';
-
-    public const STATUS_DELETE = 'delete';
-
-    public const STATUS_INACTIVE = 'inactive';
-
-    public const STATUS_TRANSFERRED = 'transferred';
-
-    public const STATUS_EXPIRED = 'expired';
-
-    public const STATUS_RENEWED = 'renewed';
-
-    public const STATUS_RENEW = 'renew';
-
-    protected array $available = [
-        'identity-admin',
-        'identity-tech',
-        'identity-billing',
-        'identity-registrant',
-        'identity-reseller',
-        'nsgroup',
-        'dnstemplate',
-        'domain',
-        'sld',
-        'tld',
-        'period',
-        'autorenew',
-        'lock',
-        'use_trustee',
-        'premium_price',
-        'execution_at',
-    ];
-
-    protected array $required = [
-        'identity-admin',
-        'identity-registrant',
-        'nsgroup',
-        'sld',
-        'tld',
-        'period',
-        'autorenew',
-    ];
-
-    public function __construct()
-    {
-        // Default values
-        $this->autorenew = 'N';
-        $this->period = 1;
-    }
-
-    public function getDomainAttribute(): string
-    {
-        if (array_key_exists('domain', $this->attributes)) {
-            return $this->attributes['domain'];
-        }
-
-        return $this->sld.'.'.$this->tld;
-    }
-
-    public function setDomainAttribute(string $domain): void
-    {
-        $this->attributes['domain'] = $domain;
+    public function __construct(
+        public ?string $identityAdmin = null,
+        public ?string $identityTech = null,
+        public ?string $identityBilling = null,
+        public ?string $identityRegistrant = null,
+        public ?string $identityReseller = null,
+        public ?string $nameserverGroup = null,
+        public ?string $dnsTemplate = null,
+        public ?string $domain = null,
+        public ?string $sld = null,
+        public ?string $tld = null,
+        public ?int $period = 1,
+        public ?string $autoRenew = 'N',
+        public ?DateTimeInterface $expireDate = null,
+        public ?bool $lock = null,
+        public ?bool $useTrustee = null,
+        public ?bool $dnsSec = null,
+        public ?string $premiumPrice = null,
+        public ?DateTimeInterface $executionAt = null,
+    ) {
     }
 
     public function toArray(): array
     {
-        return $this->serialize([
-            'identity-admin' => 'identity-admin',
-            'identity-tech' => 'identity-tech',
-            'identity-billing' => 'identity-billing',
-            'identity-registrant' => 'identity-registrant',
-            'identity-reseller' => 'identity-reseller',
+        return ArrayHelper::transformToParameters([
+            'identity-admin' => $this->identityAdmin,
+            'identity-tech' => $this->identityTech,
+            'identity-billing' => $this->identityBilling,
+            'identity-registrant' => $this->identityRegistrant,
+            'identity-reseller' => $this->identityReseller,
+            'nsgroup' => $this->nameserverGroup,
+            'dnstemplate' => $this->dnsTemplate,
+            'sld' => $this->sld,
+            'tld' => $this->tld,
+            'period' => $this->period,
+            'autorenew' => $this->autoRenew,
+            'lock' => $this->lock,
+            'use_trustee' => $this->useTrustee,
+            'premium_price' => $this->premiumPrice,
+            'execution_at' => $this->executionAt,
         ]);
     }
 }

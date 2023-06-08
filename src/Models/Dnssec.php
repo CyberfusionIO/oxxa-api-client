@@ -2,30 +2,33 @@
 
 namespace Cyberfusion\Oxxa\Models;
 
-use Cyberfusion\Oxxa\Contracts\Model as ModelContract;
+use Cyberfusion\Oxxa\Contracts\Model;
+use Cyberfusion\Oxxa\Support\ArrayHelper;
+use Cyberfusion\Oxxa\Traits\HasRequiredAttributes;
 
-class Dnssec extends Model implements ModelContract
+class Dnssec implements Model
 {
-    protected array $available = [
-        'sld',
-        'tld',
-        'flag',
-        'protocol',
-        'alg',
-        'pubkey',
-    ];
+    use HasRequiredAttributes;
 
-    protected array $required = [
-        'sld',
-        'tld',
-        'flag',
-        'protocol',
-        'alg',
-        'pubkey',
-    ];
+    public function __construct(
+        public ?string $sld = null,
+        public ?string $tld = null,
+        public ?string $flag = null,
+        public ?string $protocol = null,
+        public ?string $alg = null,
+        public ?string $publicKey = null,
+    ) {
+    }
 
     public function toArray(): array
     {
-        return $this->serialize();
+        return ArrayHelper::transformToParameters([
+            'sld' => $this->sld,
+            'tld' => $this->tld,
+            'flag' => $this->flag,
+            'protocol' => $this->protocol,
+            'alg' => $this->alg,
+            'pubkey' => $this->publicKey,
+        ]);
     }
 }

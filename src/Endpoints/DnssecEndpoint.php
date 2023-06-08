@@ -7,7 +7,6 @@ use Cyberfusion\Oxxa\Enum\StatusCode;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
 use Cyberfusion\Oxxa\Models\Dnssec;
 use Cyberfusion\Oxxa\Support\OxxaResult;
-use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 
 class DnssecEndpoint extends Endpoint implements EndpointContract
@@ -19,6 +18,25 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
      */
     public function add(Dnssec $dnssec): OxxaResult
     {
+        $requiredFields = [
+            'sld',
+            'tld',
+            'flag',
+            'protocol',
+            'alg',
+            'pubkey',
+        ];
+
+        if ($dnssec->missingAny($requiredFields)) {
+            return new OxxaResult(
+                success: false,
+                message: sprintf(
+                    'The model is missing the required fields: `%s`',
+                    implode(', ', $dnssec->missingFields($requiredFields))
+                )
+            );
+        }
+
         $xml = $this
             ->client
             ->request(array_merge(
@@ -57,14 +75,16 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
 
         $entries = [];
         $xml
-            ->filter('channel > order > details > key')
-            ->each(function (Crawler $keyNode) use (&$entries) {
-                $dnssecModel = new Dnssec();
-                foreach ($keyNode->children() as $detailNode) {
-                    /** @var DOMElement $detailNode */
-                    $dnssecModel->{strtolower($detailNode->nodeName)} = $detailNode->textContent;
-                }
-                $entries[] = $dnssecModel;
+            ->filter('channel > order > details > dnssec > key')
+            ->each(function (Crawler $keyNode) use (&$entries, $sld, $tld) {
+                $entries[] = new Dnssec(
+                    sld: $sld,
+                    tld: $tld,
+                    flag: $keyNode->filter('flags')->text(),
+                    protocol: $keyNode->filter('protocol')->text(),
+                    alg: $keyNode->filter('alg')->text(),
+                    publicKey: $keyNode->filter('pubKey')->text(),
+                );
             });
 
         return new OxxaResult(
@@ -83,6 +103,25 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
      */
     public function delete(Dnssec $dnssec): OxxaResult
     {
+        $requiredFields = [
+            'sld',
+            'tld',
+            'flag',
+            'protocol',
+            'alg',
+            'pubkey',
+        ];
+
+        if ($dnssec->missingAny($requiredFields)) {
+            return new OxxaResult(
+                success: false,
+                message: sprintf(
+                    'The model is missing the required fields: `%s`',
+                    implode(', ', $dnssec->missingFields($requiredFields))
+                )
+            );
+        }
+
         $xml = $this
             ->client
             ->request(array_merge(

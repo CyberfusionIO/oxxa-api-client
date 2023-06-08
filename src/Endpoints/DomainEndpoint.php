@@ -6,10 +6,10 @@ use Cyberfusion\Oxxa\Contracts\Endpoint as EndpointContract;
 use Cyberfusion\Oxxa\Enum\StatusCode;
 use Cyberfusion\Oxxa\Enum\Toggle;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
-use Cyberfusion\Oxxa\Models\Domain as DomainModel;
+use Cyberfusion\Oxxa\Models\Domain;
 use Cyberfusion\Oxxa\Requests\DomainListRequest;
 use Cyberfusion\Oxxa\Support\OxxaResult;
-use DOMElement;
+use DateTime;
 use Symfony\Component\DomCrawler\Crawler;
 
 class DomainEndpoint extends Endpoint implements EndpointContract
@@ -45,16 +45,12 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      */
     public function list(DomainListRequest $request = null): OxxaResult
     {
-        $parameters = [
-            'command' => 'domain_list',
-        ];
-        if (! is_null($request)) {
-            $parameters = array_merge($parameters, $request->serialize());
-        }
-
         $xml = $this
             ->client
-            ->request($parameters);
+            ->request(array_merge(
+                ['command' => 'domain_list'],
+                $request?->toArray() ?? []
+            ));
 
         $statusDescription = $this->getStatusDescription($xml);
         if ($this->getStatusCode($xml) !== StatusCode::STATUS_DOMAINS_RETRIEVED) {
@@ -68,26 +64,25 @@ class DomainEndpoint extends Endpoint implements EndpointContract
         $xml
             ->filter('channel > order > details > domain')
             ->each(function (Crawler $domainNode) use (&$domains) {
-                $domainModel = new DomainModel();
-                $domainModel->domain = $domainNode->filter('domainname')->text();
-                $domainModel->nsgroup = $domainNode->filter('nsgroup')->text();
-                $domainModel->{'identity-registrant'} = $domainNode->filter('identity-registrant')->text();
-                $domainModel->{'identity-admin'} = $domainNode->filter('identity-admin')->text();
-                $domainModel->{'identity-tech'} = $domainNode->filter('identity-tech')->text();
-                $domainModel->{'identity-billing'} = $domainNode->filter('identity-billing')->text();
-                $domainModel->expire_date = $domainNode->filter('expire_date')->text();
-                $domainModel->lock = $domainNode->filter('lock')->count()
-                    ? $domainNode->filter('lock')->text()
-                    : 'N';
-
-                $domains[] = $domainModel;
+                $domains[] = new Domain(
+                    identityAdmin: $domainNode->filter('identity-admin')->text(),
+                    identityTech: $domainNode->filter('identity-tech')->text(),
+                    identityBilling: $domainNode->filter('identity-billing')->text(),
+                    identityRegistrant: $domainNode->filter('identity-registrant')->text(),
+                    nameserverGroup: $domainNode->filter('nsgroup')->text(),
+                    domain: $domainNode->filter('domainname')->text(),
+                    expireDate: DateTime::createFromFormat('Y-m-d', $domainNode->filter('expire_date')->text())->setTime(0, 0),
+                    lock: $domainNode->filter('lock')->count()
+                        ? Toggle::toBoolean($domainNode->filter('lock')->text())
+                        : null,
+                );
             });
 
         return new OxxaResult(
             success: true,
             message: $statusDescription,
             data: [
-            'domains' => $domains,
+                'domains' => $domains,
             ]
         );
     }
@@ -117,17 +112,28 @@ class DomainEndpoint extends Endpoint implements EndpointContract
 
         $detailsNode = $xml->filter('channel > order > details');
 
-        $domainModel = new DomainModel();
-        foreach ($detailsNode->children() as $detailNode) {
-            /** @var DOMElement $detailNode */
-            $domainModel->{str_replace('-', '_', $detailNode->nodeName)} = $detailNode->textContent;
-        }
+        $domain = new Domain(
+            identityAdmin: $detailsNode->filter('identity-admin')->text(),
+            identityTech: $detailsNode->filter('identity-tech')->text(),
+            identityBilling: $detailsNode->filter('identity-billing')->text(),
+            identityRegistrant: $detailsNode->filter('identity-registrant')->text(),
+            identityReseller: $detailsNode->filter('identity-reseller')->count()
+                ? $detailsNode->filter('identity-reseller')->text()
+                : null,
+            nameserverGroup: $detailsNode->filter('nsgroup')->text(),
+            autoRenew: $detailsNode->filter('autorenew')->text(),
+            expireDate: DateTime::createFromFormat('d-m-Y', $detailsNode->filter('expire_date')->text())->setTime(0, 0),
+            useTrustee: $detailsNode->filter('usetrustee')->count()
+                ? Toggle::toBoolean($detailsNode->filter('usetrustee')->text())
+                : null,
+            dnsSec: Toggle::toBoolean($detailsNode->filter('dnssec')->text()),
+        );
 
         return new OxxaResult(
             success: true,
             message: $statusDescription,
             data: [
-                'domain' => $domainModel,
+                'domain' => $domain,
             ]
         );
     }
@@ -137,14 +143,24 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function register(DomainModel $domain): OxxaResult
+    public function register(Domain $domain): OxxaResult
     {
-        if (! $domain->isUsable()) {
+        $requiredFields = [
+            'identity-admin',
+            'identity-registrant',
+            'nsgroup',
+            'sld',
+            'tld',
+            'period',
+            'autorenew',
+        ];
+
+        if ($domain->missingAny($requiredFields)) {
             return new OxxaResult(
                 success: false,
                 message: sprintf(
                     'The domain is missing the required fields: `%s`',
-                    implode(', ', $domain->getMissingAttributes())
+                    implode(', ', $domain->missingFields($requiredFields))
                 )
             );
         }
@@ -167,7 +183,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function registerStatus(DomainModel $domain): OxxaResult
+    public function registerStatus(Domain $domain): OxxaResult
     {
         if (empty($domain->tld) || empty($domain->sld)) {
             return new OxxaResult(
@@ -227,7 +243,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function update(DomainModel $domain): OxxaResult
+    public function update(Domain $domain): OxxaResult
     {
         if (empty($domain->tld) || empty($domain->sld)) {
             return new OxxaResult(
@@ -354,7 +370,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function updateNameservers(DomainModel $domain, bool $dnssecDelete = null): OxxaResult
+    public function updateNameservers(Domain $domain, bool $dnssecDelete = null): OxxaResult
     {
         if (is_null($domain->tld) || is_null($domain->sld)) {
             return new OxxaResult(
@@ -371,11 +387,11 @@ class DomainEndpoint extends Endpoint implements EndpointContract
         if (! is_null($dnssecDelete)) {
             $parameters['dnssec_delete'] = $dnssecDelete ? 'Y' : 'N';
         }
-        if (! is_null($domain->nsgroup)) {
-            $parameters['nsgroup'] = $domain->nsgroup;
+        if (! is_null($domain->nameserverGroup)) {
+            $parameters['nsgroup'] = $domain->nameserverGroup;
         }
-        if (! is_null($domain->nsgroup)) {
-            $parameters['handle'] = $domain->dnstemplate;
+        if (! is_null($domain->nameserverGroup)) {
+            $parameters['handle'] = $domain->dnsTemplate;
         }
 
         $xml = $this
@@ -393,7 +409,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function transfer(DomainModel $domain): OxxaResult
+    public function transfer(Domain $domain): OxxaResult
     {
         $xml = $this
             ->client
@@ -413,7 +429,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function transferStatus(DomainModel $domain): OxxaResult
+    public function transferStatus(Domain $domain): OxxaResult
     {
         if (empty($domain->tld) || empty($domain->sld)) {
             return new OxxaResult(

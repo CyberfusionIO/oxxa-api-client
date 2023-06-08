@@ -4,11 +4,12 @@ namespace Cyberfusion\Oxxa\Endpoints;
 
 use Cyberfusion\Oxxa\Contracts\Endpoint as EndpointContract;
 use Cyberfusion\Oxxa\Enum\StatusCode;
+use Cyberfusion\Oxxa\Enum\Toggle;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
-use Cyberfusion\Oxxa\Models\Identity as IdentityModel;
+use Cyberfusion\Oxxa\Models\Identity;
 use Cyberfusion\Oxxa\Requests\IdentityListRequest;
 use Cyberfusion\Oxxa\Support\OxxaResult;
-use DOMElement;
+use DateTime;
 use Symfony\Component\DomCrawler\Crawler;
 
 class IdentityEndpoint extends Endpoint implements EndpointContract
@@ -20,16 +21,12 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
      */
     public function list(IdentityListRequest $request = null): OxxaResult
     {
-        $parameters = [
-            'command' => 'identity_list',
-        ];
-        if (! is_null($request)) {
-            $parameters = array_merge($parameters, $request->serialize());
-        }
-
         $xml = $this
             ->client
-            ->request($parameters);
+            ->request(array_merge(
+                ['command' => 'identity_list'],
+                $request?->toArray() ?? []
+            ));
 
         $statusDescription = $this->getStatusDescription($xml);
         if ($this->getStatusCode($xml) !== StatusCode::STATUS_IDENTITIES_RETRIEVED) {
@@ -43,13 +40,12 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
         $xml
             ->filter('channel > order > details > identity')
             ->each(function (Crawler $identityNode) use (&$identities) {
-                $identityModel = new IdentityModel();
-                $identityModel->handle = $identityNode->filter('handle')->text();
-                $identityModel->alias = $identityNode->filter('alias')->text();
-                $identityModel->company_name = $identityNode->filter('company_name')->text();
-                $identityModel->name = $identityNode->filter('name')->text();
-
-                $identities[] = $identityModel;
+                $identities[] = new Identity(
+                    handle: $identityNode->filter('handle')->text(),
+                    alias: $identityNode->filter('alias')->text(),
+                    companyName: $identityNode->filter('company_name')->text(),
+                    name: $identityNode->filter('name')->text(),
+                );
             });
 
         return new OxxaResult(
@@ -85,17 +81,54 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
 
         $detailsNode = $xml->filter('channel > order > details');
 
-        $identityModel = new IdentityModel();
-        foreach ($detailsNode->children() as $detailNode) {
-            /** @var DOMElement $detailNode */
-            $identityModel->{$detailNode->nodeName} = $detailNode->textContent;
-        }
+        $identity = new Identity(
+            handle: $handle,
+            alias: $detailsNode->filter('alias')->text(),
+            company: Toggle::toBoolean($detailsNode->filter('company')->text()),
+            companyName: $detailsNode->filter('company_name')->text(),
+            companyType: $detailsNode->filter('company_type')->text(),
+            jobTitle: $detailsNode->filter('jobtitle')->text(),
+            firstName: $detailsNode->filter('firstname')->text(),
+            lastName: $detailsNode->filter('lastname')->text(),
+            street: $detailsNode->filter('street')->text(),
+            number: $detailsNode->filter('number')->text(),
+            suffix: $detailsNode->filter('suffix')->text(),
+            postalCode: $detailsNode->filter('postalcode')->text(),
+            city: $detailsNode->filter('city')->text(),
+            state: $detailsNode->filter('state')->text(),
+            country: $detailsNode->filter('country')->text(),
+            tel: $detailsNode->filter('tel')->text(),
+            fax: $detailsNode->filter('fax')->text(),
+            email: $detailsNode->filter('email')->text(),
+            dateBirth: $detailsNode->filter('datebirth')->text() !== ''
+                ? DateTime::createFromFormat('d-m-Y', $detailsNode->filter('datebirth')->text())->setTime(0, 0)
+                : null,
+            placeBirth: $detailsNode->filter('placebirth')->text(),
+            countryBirth: $detailsNode->filter('countrybirth')->text(),
+            postalBirth: $detailsNode->filter('postalbirth')->text(),
+            idNumber: $detailsNode->filter('idnumber')->text(),
+            regNumber: $detailsNode->filter('regnumber')->text(),
+            vatNumber: $detailsNode->filter('vatnumber')->text(),
+            trademarkNumber: $detailsNode->filter('tmnumber')->text(),
+            trademarkCountry: $detailsNode->filter('tmcountry')->text(),
+            trademarkName: $detailsNode->filter('tmname')->text(),
+            idCardDate: $detailsNode->filter('idcarddate')->text() !== ''
+                ? DateTime::createFromFormat('d-m-Y', $detailsNode->filter('idcarddate')->text())->setTime(0, 0)
+                : null,
+            idCardIssuer: $detailsNode->filter('idcardissuer')->text(),
+            xxxMemberId: $detailsNode->filter('xxxmemberid')->text(),
+            xxxPassword: $detailsNode->filter('xxxpassword')->text(),
+            ensId: $detailsNode->filter('ens_id')->text(),
+            ensPassword: $detailsNode->filter('ens_password')->text(),
+            profession: $detailsNode->filter('profession')->text(),
+            travelUinId: $detailsNode->filter('travel_uin_id')->text(),
+        );
 
         return new OxxaResult(
             success: true,
             message: $statusDescription,
             data: [
-                'identity' => $identityModel,
+                'identity' => $identity,
             ]
         );
     }
@@ -105,14 +138,27 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function create(IdentityModel $identity): OxxaResult
+    public function create(Identity $identity): OxxaResult
     {
-        if (! $identity->isUsable()) {
+        $requiredFields = [
+            'firstname',
+            'lastname',
+            'street',
+            'number',
+            'postalcode',
+            'city',
+            'state',
+            'country',
+            'tel',
+            'email',
+        ];
+
+        if ($identity->missingAny($requiredFields)) {
             return new OxxaResult(
                 success: false,
                 message: sprintf(
                     'The identity is missing the required fields: `%s`',
-                    implode(', ', $identity->getMissingAttributes())
+                    implode(', ', $identity->missingFields($requiredFields))
                 )
             );
         }
@@ -121,7 +167,7 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
             ->client
             ->request(array_merge(
                 ['command' => 'identity_add'],
-                $identity->serialize()
+                $identity->toArray()
             ));
 
         $statusDescription = $this->getStatusDescription($xml);
@@ -146,7 +192,7 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function update(string $handle, IdentityModel $identity): OxxaResult
+    public function update(string $handle, Identity $identity): OxxaResult
     {
         $xml = $this
             ->client
@@ -155,7 +201,7 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
                     'command' => 'identity_upd',
                     'handle' => $handle,
                 ],
-                $identity->serialize()
+                $identity->toArray()
             ));
 
         return new OxxaResult(

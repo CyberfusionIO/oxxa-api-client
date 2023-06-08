@@ -4,7 +4,8 @@ PHP client for the [Oxxa API](https://www.oxxa.com/domeinnamen/api).
 
 ## Support
 
-This client was written by Cyberfusion. It has been open sourced for the community. If you have any questions, open an issue on GitHub or email support@cyberfusion.nl.
+This client was written by Cyberfusion. It has been open sourced for the community. If you have any questions, open an 
+issue on GitHub or email support@cyberfusion.nl.
 
 This client is not supported by Oxxa.
 
@@ -27,10 +28,10 @@ composer require cyberfusion/oxxa-api-client
 ### Getting started
 
 ```php
-// Initialize Oxxa API
+// Initialize the API
 $oxxa = new Oxxa($username, $password);
 
-// Perform call to endpoint
+// Perform calls to an endpoint
 $available = $oxxa
     ->domain()
     ->check('cyberfusion.nl');
@@ -40,7 +41,7 @@ $available = $oxxa
 
 To test your implementation, use the test mode. All requests tell the Oxxa API that the request is a test.
 
-Enable:
+Enable: 
 
 ```php
 $oxxa->enableTestMode();
@@ -54,7 +55,7 @@ $oxxa->disableTestMode();
 
 ### Exceptions
 
-In case of errors, the client throws the exception `OxxaException`.
+In case of errors, the client throws the exception `OxxaException`. 
 
 All exceptions have a code. These can be found in the `OxxaException` class.
 
@@ -70,7 +71,8 @@ To generate a code coverage report in the `build/report` directory, run:
 
 ## Contribution
 
-Contributions are welcome. See the [contributing guidelines](CONTRIBUTING.md).
+Some basic endpoints are implemented, but there are a lot which are not implemented yet. Feel free to contribute! See 
+the [contributing guidelines](CONTRIBUTING.md).
 
 ## Security
 

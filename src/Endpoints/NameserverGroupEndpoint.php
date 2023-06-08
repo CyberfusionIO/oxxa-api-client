@@ -5,10 +5,9 @@ namespace Cyberfusion\Oxxa\Endpoints;
 use Cyberfusion\Oxxa\Contracts\Endpoint as EndpointContract;
 use Cyberfusion\Oxxa\Enum\StatusCode;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
-use Cyberfusion\Oxxa\Models\NameserverGroup as NameserverGroupModel;
+use Cyberfusion\Oxxa\Models\NameserverGroup;
 use Cyberfusion\Oxxa\Requests\NameserverGroupListRequest;
 use Cyberfusion\Oxxa\Support\OxxaResult;
-use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 
 class NameserverGroupEndpoint extends Endpoint implements EndpointContract
@@ -20,16 +19,12 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
      */
     public function list(NameserverGroupListRequest $request = null): OxxaResult
     {
-        $parameters = [
-            'command' => 'nsgroup_list',
-        ];
-        if (! is_null($request)) {
-            $parameters = array_merge($parameters, $request->serialize());
-        }
-
         $xml = $this
             ->client
-            ->request($parameters);
+            ->request(array_merge(
+                ['command' => 'nsgroup_list'],
+                $request?->toArray() ?? []
+            ));
 
         $statusDescription = $this->getStatusDescription($xml);
         if ($this->getStatusCode($xml) !== StatusCode::STATUS_NSGROUPS_RETRIEVED) {
@@ -43,11 +38,24 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
         $xml
             ->filter('channel > order > details > nsgroup')
             ->each(function (Crawler $nameserverGroupNode) use (&$nameserverGroups) {
-                $nameserverGroupModel = new NameserverGroupModel();
-                $nameserverGroupModel->handle = $nameserverGroupNode->filter('handle')->text();
-                $nameserverGroupModel->alias = $nameserverGroupNode->filter('name')->text();
-
-                $nameserverGroups[] = $nameserverGroupModel;
+                $nameserverGroups[] = new NameserverGroup(
+                    handle: $nameserverGroupNode->filter('handle')->text(),
+                    alias: $nameserverGroupNode->filter('alias')->text(),
+                    nameserver1Fqdn: $nameserverGroupNode->filter('nameservers > ns1_fqdn')->text(),
+                    nameserver2Fqdn: $nameserverGroupNode->filter('nameservers > ns2_fqdn')->text(),
+                    nameserver3Fqdn: $nameserverGroupNode->filter('nameservers > ns3_fqdn')->count()
+                        ? $nameserverGroupNode->filter('nameservers > ns3_fqdn')->text()
+                        : null,
+                    nameserver4Fqdn: $nameserverGroupNode->filter('nameservers > ns4_fqdn')->count()
+                        ? $nameserverGroupNode->filter('nameservers > ns4_fqdn')->text()
+                        : null,
+                    nameserver5Fqdn: $nameserverGroupNode->filter('nameservers > ns5_fqdn')->count()
+                        ? $nameserverGroupNode->filter('nameservers > ns5_fqdn')->text()
+                        : null,
+                    nameserver6Fqdn: $nameserverGroupNode->filter('nameservers > ns6_fqdn')->count()
+                        ? $nameserverGroupNode->filter('nameservers > ns6_fqdn')->text()
+                        : null,
+                );
             });
 
         return new OxxaResult(
@@ -83,17 +91,30 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
 
         $detailsNode = $xml->filter('channel > order > details');
 
-        $nameserverGroupModel = new NameserverGroupModel();
-        foreach ($detailsNode->children() as $detailNode) {
-            /** @var DOMElement $detailNode */
-            $nameserverGroupModel->{$detailNode->nodeName} = $detailNode->textContent;
-        }
+        $nameserverGroup = new NameserverGroup(
+            handle: $handle,
+            alias: $detailsNode->filter('alias')->text(),
+            nameserver1Fqdn: $detailsNode->filter('ns1_fqdn')->text(),
+            nameserver2Fqdn: $detailsNode->filter('ns2_fqdn')->text(),
+            nameserver3Fqdn: $detailsNode->filter('ns3_fqdn')->count()
+                ? $detailsNode->filter('ns3_fqdn')->text()
+                : null,
+            nameserver4Fqdn: $detailsNode->filter('ns4_fqdn')->count()
+                ? $detailsNode->filter('ns4_fqdn')->text()
+                : null,
+            nameserver5Fqdn: $detailsNode->filter('ns5_fqdn')->count()
+                ? $detailsNode->filter('ns5_fqdn')->text()
+                : null,
+            nameserver6Fqdn: $detailsNode->filter('ns6_fqdn')->count()
+                ? $detailsNode->filter('ns6_fqdn')->text()
+                : null,
+        );
 
         return new OxxaResult(
             success: true,
             message: $statusDescription,
             data: [
-                'nameserverGroup' => $nameserverGroupModel,
+                'nameserverGroup' => $nameserverGroup,
             ]
         );
     }
@@ -103,14 +124,19 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function create(NameserverGroupModel $nameserverGroup): OxxaResult
+    public function create(NameserverGroup $nameserverGroup): OxxaResult
     {
-        if (! $nameserverGroup->isUsable()) {
+        $requiredFields = [
+            'ns1_fqdn',
+            'ns2_fqdn',
+        ];
+
+        if ($nameserverGroup->missingAny($requiredFields)) {
             return new OxxaResult(
                 false,
                 sprintf(
                     'The nameserver group is missing the required fields: `%s`',
-                    implode(', ', $nameserverGroup->getMissingAttributes())
+                    implode(', ', $nameserverGroup->missingFields($requiredFields))
                 )
             );
         }
@@ -119,7 +145,7 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
             ->client
             ->request(array_merge(
                 ['command' => 'nsgroup_add'],
-                $nameserverGroup->serialize()
+                $nameserverGroup->toArray()
             ));
 
         $statusDescription = $this->getStatusDescription($xml);
@@ -144,7 +170,7 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function update(string $handle, NameserverGroupModel $nameserverGroup): OxxaResult
+    public function update(string $handle, NameserverGroup $nameserverGroup): OxxaResult
     {
         $xml = $this
             ->client
@@ -153,7 +179,7 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
                     'command' => 'nsgroup_upd',
                     'nsgroup' => $handle,
                 ],
-                $nameserverGroup->serialize()
+                $nameserverGroup->toArray()
             ));
 
         return new OxxaResult(
