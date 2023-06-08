@@ -4,16 +4,20 @@ PHP client for the [Oxxa API](https://www.oxxa.com/domeinnamen/api).
 
 ## Support
 
-This client is NOT officially supported by Oxxa. If you have any questions, open an issue at this repository.
+This client was written by Cyberfusion. It has been open sourced for the community. If you have any questions, open an 
+issue on GitHub or email support@cyberfusion.nl.
 
-This client is created by Cyberfusion, a hosting provider with the best hosting platform for agencies.
+This client is not supported by Oxxa.
 
 ## Requirements
 
-This client requires PHP 8.1 or higher and requires several php modules. These modules are installed by default, so 
-probably won't be any issue.
+This client requires PHP 8.1 or higher with default PHP modules.
 
 ## Installation
+
+This client can be used in any PHP project and with any framework.
+
+Install the client with Composer:
 
 ```bash
 composer require cyberfusion/oxxa-api-client
@@ -35,13 +39,15 @@ $available = $oxxa
 
 ### Test mode
 
-To test your implementation, enable the test mode. All request will tell the Oxxa API that the request is a test:
+To test your implementation, use the test mode. All requests tell the Oxxa API that the request is a test.
+
+Enable: 
 
 ```php
 $oxxa->enableTestMode();
 ```
 
-Or disable the test mode:
+Disable:
 
 ```php
 $oxxa->disableTestMode();
@@ -49,7 +55,7 @@ $oxxa->disableTestMode();
 
 ### Exceptions
 
-In case of errors, the client throws an exception `OxxaException`. 
+In case of errors, the client throws the exception `OxxaException`. 
 
 All exceptions have a code. These can be found in the `OxxaException` class.
 

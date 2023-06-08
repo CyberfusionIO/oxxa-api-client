@@ -17,7 +17,7 @@ class Oxxa implements OxxaClient
 
     private const VERSION = '1.0.0';
 
-    private const USER_AGENT = 'oxxa-client/'.self::VERSION;
+    private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
 
     /**
      * @throws OxxaException
