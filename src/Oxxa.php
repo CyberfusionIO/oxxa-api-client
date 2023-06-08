@@ -5,7 +5,6 @@ namespace Cyberfusion\Oxxa;
 use Cyberfusion\Oxxa\Contracts\OxxaClient;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
 use Illuminate\Http\Client\Factory;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
 use Throwable;
@@ -18,7 +17,7 @@ class Oxxa implements OxxaClient
 
     private const VERSION = '1.0.0';
 
-    private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
+    private const USER_AGENT = 'oxxa-client/'.self::VERSION;
 
     /**
      * @throws OxxaException
@@ -59,7 +58,9 @@ class Oxxa implements OxxaClient
     public function request(array $parameters = []): Crawler
     {
         // Create a new pending request with the user agent and timeout when no client was injected
-        $pendingRequest = $this->client ?? Http::withUserAgent(self::USER_AGENT)->timeout(self::TIMEOUT);
+        $pendingRequest = $this->client ?? (new Factory())
+            ->withUserAgent(self::USER_AGENT)
+            ->timeout(self::TIMEOUT);
 
         // Always add the API credentials to the request
         $parameters['apiuser'] = $this->username;

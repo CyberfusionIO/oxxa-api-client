@@ -14,4 +14,9 @@ class Toggle
             ? self::ENABLED
             : self::DISABLED;
     }
+
+    public static function toBoolean(?string $value): bool
+    {
+        return $value === self::ENABLED;
+    }
 }

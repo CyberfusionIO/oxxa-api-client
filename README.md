@@ -4,19 +4,16 @@ PHP client for the [Oxxa API](https://www.oxxa.com/domeinnamen/api).
 
 ## Support
 
-This client was written by Cyberfusion. It has been open sourced for the community. If you have any questions, open an issue on GitHub or email support@cyberfusion.nl.
+This client is NOT officially supported by Oxxa. If you have any questions, open an issue at this repository.
 
-This client is not supported by Oxxa.
+This client is created by Cyberfusion, a hosting provider with the best hosting platform for agencies.
 
 ## Requirements
 
-This client requires PHP 8.1 or higher with default PHP modules.
+This client requires PHP 8.1 or higher and requires several php modules. These modules are installed by default, so 
+probably won't be any issue.
 
 ## Installation
-
-This client can be used in any PHP project and with any framework.
-
-Install the client with Composer:
 
 ```bash
 composer require cyberfusion/oxxa-api-client
@@ -27,10 +24,10 @@ composer require cyberfusion/oxxa-api-client
 ### Getting started
 
 ```php
-// Initialize Oxxa API
+// Initialize the API
 $oxxa = new Oxxa($username, $password);
 
-// Perform call to endpoint
+// Perform calls to an endpoint
 $available = $oxxa
     ->domain()
     ->check('cyberfusion.nl');
@@ -38,15 +35,13 @@ $available = $oxxa
 
 ### Test mode
 
-To test your implementation, use the test mode. All requests tell the Oxxa API that the request is a test.
-
-Enable:
+To test your implementation, enable the test mode. All request will tell the Oxxa API that the request is a test:
 
 ```php
 $oxxa->enableTestMode();
 ```
 
-Disable:
+Or disable the test mode:
 
 ```php
 $oxxa->disableTestMode();
@@ -54,7 +49,7 @@ $oxxa->disableTestMode();
 
 ### Exceptions
 
-In case of errors, the client throws the exception `OxxaException`.
+In case of errors, the client throws an exception `OxxaException`. 
 
 All exceptions have a code. These can be found in the `OxxaException` class.
 
@@ -70,7 +65,8 @@ To generate a code coverage report in the `build/report` directory, run:
 
 ## Contribution
 
-Contributions are welcome. See the [contributing guidelines](CONTRIBUTING.md).
+Some basic endpoints are implemented, but there are a lot which are not implemented yet. Feel free to contribute! See 
+the [contributing guidelines](CONTRIBUTING.md).
 
 ## Security
 

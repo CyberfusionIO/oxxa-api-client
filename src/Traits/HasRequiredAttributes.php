@@ -4,21 +4,24 @@ namespace Cyberfusion\Oxxa\Traits;
 
 trait HasRequiredAttributes
 {
-    protected array $required = [];
-
     /**
-     * Determines if all the required attributes are set.
+     * Determines if all the fields are set.
      */
-    public function isUsable(): bool
+    public function filledAll(array $fields = []): bool
     {
-        return count($this->getMissingAttributes()) === 0;
+        return count($this->missingFields($fields)) === 0;
+    }
+
+    public function missingAny(array $fields = []): bool
+    {
+        return count($this->missingFields($fields)) !== 0;
     }
 
     /**
-     * Returns the misisng attributes in the model.
+     * Returns the missing fields in the model.
      */
-    public function getMissingAttributes(): array
+    public function missingFields(array $fields = []): array
     {
-        return array_diff($this->required, array_keys($this->attributes));
+        return array_diff($fields, array_keys($this->toArray()));
     }
 }

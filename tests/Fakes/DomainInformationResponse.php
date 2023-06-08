@@ -22,7 +22,7 @@ class DomainInformationResponse
                     <identity-billing> ABCD147258</identity-billing>
                     <identity-tech> ABCD147258</identity-tech>
                     <nsgroup>EFGH1234</nsgroup>
-                    <expire_date>04-10-2009 (dd-mm-yyyy)</expire_date>
+                    <expire_date>04-10-2009</expire_date>
                     <autorenew>Y</autorenew>
                     <lock>N</lock>
                     <dnssec>N</dnssec>
