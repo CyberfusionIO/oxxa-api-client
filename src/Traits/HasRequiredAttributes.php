@@ -5,13 +5,16 @@ namespace Cyberfusion\Oxxa\Traits;
 trait HasRequiredAttributes
 {
     /**
-     * Determines if all the fields are set.
+     * Determines if all the fields are set in the model.
      */
     public function filledAll(array $fields = []): bool
     {
         return count($this->missingFields($fields)) === 0;
     }
 
+    /**
+     * Determines if any of the fields are missing in the model.
+     */
     public function missingAny(array $fields = []): bool
     {
         return count($this->missingFields($fields)) !== 0;
