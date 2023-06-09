@@ -57,7 +57,7 @@ class OxxaException extends Exception
     public static function invalidTechIdentity(string $statusCode): OxxaException
     {
         return new self(
-            sprintf('`%s`: Your chosen tech identity doesn\'t exits', $statusCode),
+            sprintf('`%s`: Your chosen tech identity doesn\'t exist', $statusCode),
             self::INVALID_TECH_IDENTITY
         );
     }
@@ -65,7 +65,7 @@ class OxxaException extends Exception
     public static function invalidRegistrantIdentity(string $statusCode): OxxaException
     {
         return new self(
-            sprintf('`%s`: Your chosen registrant identity doesn\'t exits', $statusCode),
+            sprintf('`%s`: Your chosen registrant identity doesn\'t exist', $statusCode),
             self::INVALID_REGISTRANT_IDENTITY
         );
     }
@@ -73,7 +73,7 @@ class OxxaException extends Exception
     public static function invalidBillingIdentity(string $statusCode): OxxaException
     {
         return new self(
-            sprintf('`%s`: Your chosen billing identity doesn\'t exits', $statusCode),
+            sprintf('`%s`: Your chosen billing identity doesn\'t exist', $statusCode),
             self::INVALID_BILLING_IDENTITY
         );
     }
@@ -81,7 +81,7 @@ class OxxaException extends Exception
     public static function invalidAdminIdentity(string $statusCode): OxxaException
     {
         return new self(
-            sprintf('`%s`: Your chosen admin identity doesn\'t exits', $statusCode),
+            sprintf('`%s`: Your chosen admin identity doesn\'t exist', $statusCode),
             self::INVALID_ADMIN_IDENTITY
         );
     }
