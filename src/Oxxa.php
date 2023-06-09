@@ -15,7 +15,7 @@ class Oxxa implements OxxaClient
 
     private const TIMEOUT = 180;
 
-    private const VERSION = '2.0.0';
+    private const VERSION = '2.0.1';
 
     private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
 

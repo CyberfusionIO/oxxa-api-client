@@ -30,6 +30,8 @@ class Domain implements Model
         public ?bool $dnsSec = null,
         public ?string $premiumPrice = null,
         public ?DateTimeInterface $executionAt = null,
+        public ?int $transferCode = null,
+        public ?bool $dnssecDelete = null,
     ) {
     }
 
@@ -51,6 +53,8 @@ class Domain implements Model
             'use_trustee' => $this->useTrustee,
             'premium_price' => $this->premiumPrice,
             'execution_at' => $this->executionAt,
+            'trans_epp' => $this->transferCode,
+            'dnssec_delete' => $this->dnssecDelete,
         ]);
     }
 }

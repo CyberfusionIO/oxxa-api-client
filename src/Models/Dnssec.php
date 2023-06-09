@@ -13,9 +13,9 @@ class Dnssec implements Model
     public function __construct(
         public ?string $sld = null,
         public ?string $tld = null,
-        public ?string $flag = null,
-        public ?string $protocol = null,
-        public ?string $alg = null,
+        public ?int $flag = null,
+        public ?int $protocol = null,
+        public ?int $alg = null,
         public ?string $publicKey = null,
     ) {
     }
