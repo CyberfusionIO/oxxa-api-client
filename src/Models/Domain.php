@@ -30,7 +30,7 @@ class Domain implements Model
         public ?bool $dnsSec = null,
         public ?string $premiumPrice = null,
         public ?DateTimeInterface $executionAt = null,
-        public ?int $transferCode = null,
+        public ?string $transferCode = null,
         public ?bool $dnssecDelete = null,
     ) {
     }
