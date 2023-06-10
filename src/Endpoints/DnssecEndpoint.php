@@ -80,9 +80,9 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
                 $entries[] = new Dnssec(
                     sld: $sld,
                     tld: $tld,
-                    flag: $keyNode->filter('flags')->text(),
-                    protocol: $keyNode->filter('protocol')->text(),
-                    alg: $keyNode->filter('alg')->text(),
+                    flag: (int) $keyNode->filter('flags')->text(),
+                    protocol: (int) $keyNode->filter('protocol')->text(),
+                    alg: (int) $keyNode->filter('alg')->text(),
                     publicKey: $keyNode->filter('pubKey')->text(),
                 );
             });
