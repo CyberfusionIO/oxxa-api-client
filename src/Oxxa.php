@@ -5,6 +5,7 @@ namespace Cyberfusion\Oxxa;
 use Cyberfusion\Oxxa\Contracts\OxxaClient;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
 use Illuminate\Http\Client\Factory;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
 use Throwable;
@@ -15,7 +16,7 @@ class Oxxa implements OxxaClient
 
     private const TIMEOUT = 180;
 
-    private const VERSION = '2.0.1';
+    private const VERSION = '2.0.2';
 
     private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
 
@@ -26,7 +27,7 @@ class Oxxa implements OxxaClient
         private readonly string $username,
         private readonly string $password,
         private bool $testMode = false,
-        private readonly ?Factory $client = null,
+        private readonly Factory|PendingRequest|null $client = null,
     ) {
         if (Str::length($this->username) === 0) {
             throw OxxaException::missingUsername();
