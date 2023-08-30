@@ -12,13 +12,13 @@ use Throwable;
 
 class Oxxa implements OxxaClient
 {
-    private const BASE_URI = 'https://api.oxxa.com/command.php';
-
     private const TIMEOUT = 180;
 
     private const VERSION = '2.0.2';
 
     private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
+
+    private string $baseUri = 'https://api.oxxa.com/command.php';
 
     /**
      * @throws OxxaException
@@ -35,6 +35,13 @@ class Oxxa implements OxxaClient
         if (Str::length($this->password) === 0) {
             throw OxxaException::missingPassword();
         }
+    }
+
+    public function setBaseUri(string $baseUri): self
+    {
+        $this->baseUri = $baseUri;
+
+        return $this;
     }
 
     public function enabledTestMode(): self
@@ -75,7 +82,7 @@ class Oxxa implements OxxaClient
         // Perform the request and throw an exception when the request failed
         try {
             $response = $pendingRequest
-                ->baseUrl(self::BASE_URI)
+                ->baseUrl($this->baseUri)
                 ->get('', $parameters)
                 ->throw();
         } catch (Throwable $throwable) {

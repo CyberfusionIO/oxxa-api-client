@@ -53,6 +53,16 @@ Disable:
 $oxxa->disableTestMode();
 ```
 
+#### Mock server
+
+When testing with a mock server, you will be able to modify the base URL of the API with:
+
+```php
+$oxxa->setBaseUri('http://localhost:8080');
+```
+
+This will return the Oxxa instance, so you can chain it with other methods.
+
 ### Exceptions
 
 In case of errors, the client throws the exception `OxxaException`. 
