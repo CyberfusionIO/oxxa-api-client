@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Please note this changelog affects 
 this package and not the Oxxa API.
 
+## [2.1.0]
+
+### Added
+
+- Add support for a custom base uri, useful for using a mock server for testing/implementing the API.
+
 ## [2.0.2]
 
 ### Fixed
