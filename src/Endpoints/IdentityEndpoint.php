@@ -199,7 +199,7 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
             ->request(array_merge(
                 [
                     'command' => 'identity_upd',
-                    'handle' => $handle,
+                    'identity' => $handle,
                 ],
                 $identity->toArray()
             ));
