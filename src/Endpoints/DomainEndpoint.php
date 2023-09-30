@@ -121,7 +121,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 ? $detailsNode->filter('identity-reseller')->text()
                 : null,
             nameserverGroup: $detailsNode->filter('nsgroup')->text(),
-            autoRenew: $detailsNode->filter('autorenew')->text(),
+            autoRenew: Toggle::toBoolean($detailsNode->filter('autorenew')->text()),
             expireDate: DateTime::createFromFormat('d-m-Y', $detailsNode->filter('expire_date')->text())->setTime(0, 0),
             useTrustee: $detailsNode->filter('usetrustee')->count()
                 ? Toggle::toBoolean($detailsNode->filter('usetrustee')->text())
