@@ -9,7 +9,7 @@ class UserTldListRequest implements Request
 {
     public function __construct(
         public ?bool $withPrice = null,
-        public ?bool $converted = null,
+        public ?string $converted = null,
         public ?string $tld = null,
     ) {
     }
