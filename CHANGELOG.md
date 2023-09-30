@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Please note this changelog affects 
 this package and not the Oxxa API.
 
+## [2.1.1]
+
+### Fixed
+
+- The `converted` property of the `UserTldListRequest` should contain the valuta name instead of a boolean.
+
 ## [2.1.0]
 
 ### Added
