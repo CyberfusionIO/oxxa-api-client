@@ -26,8 +26,8 @@
         "guzzlehttp/guzzle": "^7.0",
         "illuminate/http": "^9.0|^10.0",
         "illuminate/support": "^9.0|^10.0",
-        "symfony/css-selector": "^6.0",
-        "symfony/dom-crawler": "^6.0"
+        "symfony/css-selector": "^7.0",
+        "symfony/dom-crawler": "^7.0"
     },
     "require-dev": {
         "laravel/pint": "^1.7",
