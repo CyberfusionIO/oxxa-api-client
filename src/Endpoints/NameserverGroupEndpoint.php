@@ -26,11 +26,13 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
                 $request?->toArray() ?? []
             ));
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_NSGROUPS_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_NSGROUPS_RETRIEVED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -63,7 +65,8 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'nameserverGroups' => $nameserverGroups,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -81,11 +84,13 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
                 'nsgroup' => $handle,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_NSGROUP_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_NSGROUP_RETRIEVED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -115,7 +120,8 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'nameserverGroup' => $nameserverGroup,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -133,8 +139,8 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
 
         if ($nameserverGroup->missingAny($requiredFields)) {
             return new OxxaResult(
-                false,
-                sprintf(
+                success: false,
+                message: sprintf(
                     'The nameserver group is missing the required fields: `%s`',
                     implode(', ', $nameserverGroup->missingFields($requiredFields))
                 )
@@ -148,11 +154,13 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
                 $nameserverGroup->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_NSGROUP_ADDED) {
+        if ($statusCode !== StatusCode::STATUS_NSGROUP_ADDED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -161,7 +169,8 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'handle' => $xml->filter('channel > order > details')->text(),
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -182,9 +191,13 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
                 $nameserverGroup->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_NSGROUP_UPDATED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_NSGROUP_UPDATED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -202,9 +215,13 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
                 'nsgroup' => $handle,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_NSGROUP_DELETED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_NSGROUP_DELETED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 }

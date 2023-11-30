@@ -27,11 +27,13 @@ class UserTldEndpoint extends Endpoint implements EndpointContract
                 $request?->toArray() ?? []
             ));
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_TLDS_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_TLDS_RETRIEVED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -89,7 +91,8 @@ class UserTldEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'tlds' => $tlds,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 }
