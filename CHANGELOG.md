@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Please note this changelog affects 
 this package and not the Oxxa API.
 
+## [2.2.0]
+
+### Added
+
+- Add status code to all endpoint responses to allow specific actions for certain status codes.
+
 ## [2.1.3]
 
 ### Fixed
