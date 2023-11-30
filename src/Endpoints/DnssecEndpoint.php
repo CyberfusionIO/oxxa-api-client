@@ -44,9 +44,13 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
                 $dnssec->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DNSSEC_ADDED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DNSSEC_ADDED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -65,8 +69,9 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
                 'tld' => $tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_DNSSEC_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_DNSSEC_RETRIEVED) {
             return new OxxaResult(
                 success: false,
                 message: $statusDescription
@@ -92,7 +97,8 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'keys' => $entries,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -129,9 +135,13 @@ class DnssecEndpoint extends Endpoint implements EndpointContract
                 $dnssec->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DNSSEC_DELETED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DNSSEC_DELETED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 }

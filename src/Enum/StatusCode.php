@@ -59,4 +59,6 @@ class StatusCode
     public const STATUS_DNSSEC_ADDED = 'XMLOK 82';
 
     public const STATUS_DNSSEC_DELETED = 'XMLOK 81';
+
+    public const STATUS_DOMAIN_NOT_IN_ADMINISTRATION = 'XMLERR 24';
 }

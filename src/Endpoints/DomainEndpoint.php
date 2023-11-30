@@ -29,12 +29,16 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'sld' => $sld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
             success: true,
-            message: $this->getStatusDescription($xml),
+            message: $statusDescription,
             data: [
-                'available' => $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_AVAILABLE,
-            ]
+                'available' => $statusCode === StatusCode::STATUS_DOMAIN_AVAILABLE,
+            ],
+            status: $statusCode,
         );
     }
 
@@ -52,11 +56,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 $request?->toArray() ?? []
             ));
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_DOMAINS_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_DOMAINS_RETRIEVED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -83,7 +89,8 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'domains' => $domains,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -102,11 +109,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'tld' => $tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_DOMAIN_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_DOMAIN_RETRIEVED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -134,7 +143,8 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'domain' => $domain,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -172,9 +182,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 $domain->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_REGISTER_REQUESTED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_REGISTER_REQUESTED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -200,6 +214,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'tld' => $domain->tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
 
         return new OxxaResult(
@@ -208,8 +223,8 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             data: [
                 'done' => $xml->filter('channel > order > done')->text() === 'TRUE',
                 'description' => $statusDescription,
-                'code' => $this->getStatusCode($xml),
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -228,12 +243,16 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'tld' => $tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_TOKEN_SENT,
-            message: $this->getStatusDescription($xml),
+            success: $statusCode === StatusCode::STATUS_DOMAIN_TOKEN_SENT,
+            message: $statusDescription,
             data: [
                 'epp' => $xml->filter('channel > order > details')->text(),
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -259,9 +278,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 $domain->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_UPDATED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_UPDATED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -281,9 +304,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'tld' => $tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_AUTORENEW_CHANGED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_AUTORENEW_CHANGED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -331,9 +358,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'lock' => Toggle::fromBoolean($lock),
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_LOCK_CHANGED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_LOCK_CHANGED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -398,9 +429,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             ->client
             ->request($parameters);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_UPDATED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_UPDATED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -418,9 +453,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 $domain->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_TRANSFER_REQUESTED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_TRANSFER_REQUESTED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -446,6 +485,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'tld' => $domain->tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
 
         return new OxxaResult(
@@ -454,8 +494,9 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             data: [
                 'done' => $xml->filter('channel > order > done')->text() === 'TRUE',
                 'description' => $statusDescription,
-                'code' => $this->getStatusCode($xml),
-            ]
+                'code' => $statusCode,
+            ],
+            status: $$statusCode,
         );
     }
 
@@ -474,9 +515,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'tld' => $tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_RESTORED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_RESTORED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -496,9 +541,13 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 'tld' => $tld,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_DOMAIN_DELETED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_DOMAIN_DELETED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 }

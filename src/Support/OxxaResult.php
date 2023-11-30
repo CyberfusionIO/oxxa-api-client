@@ -7,7 +7,8 @@ class OxxaResult
     public function __construct(
         private readonly bool $success = false,
         private readonly string $message = '',
-        private readonly array $data = []
+        private readonly array $data = [],
+        private readonly string $status = '',
     ) {
     }
 
@@ -24,6 +25,11 @@ class OxxaResult
     public function getMessage(): string
     {
         return $this->message;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 
     public function getData(string $key = null): mixed

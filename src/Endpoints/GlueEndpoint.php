@@ -24,11 +24,13 @@ class GlueEndpoint extends Endpoint implements EndpointContract
                 'glues' => $ips,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_GLUES_UPDATED) {
+        if ($statusCode !== StatusCode::STATUS_GLUES_UPDATED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -38,7 +40,8 @@ class GlueEndpoint extends Endpoint implements EndpointContract
             data: [
                 'fqdn' => $fqdn,
                 'ips' => $ips,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 }

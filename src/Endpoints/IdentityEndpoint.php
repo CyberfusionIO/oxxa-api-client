@@ -28,11 +28,13 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
                 $request?->toArray() ?? []
             ));
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_IDENTITIES_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_IDENTITIES_RETRIEVED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -53,7 +55,8 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'identities' => $identities,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -71,11 +74,13 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
                 'identity' => $handle,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_IDENTITY_RETRIEVED) {
+        if ($statusCode !== StatusCode::STATUS_IDENTITY_RETRIEVED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -129,7 +134,8 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'identity' => $identity,
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -170,11 +176,13 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
                 $identity->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
-        if ($this->getStatusCode($xml) !== StatusCode::STATUS_IDENTITY_ADDED) {
+        if ($statusCode !== StatusCode::STATUS_IDENTITY_ADDED) {
             return new OxxaResult(
                 success: false,
-                message: $statusDescription
+                message: $statusDescription,
+                status: $statusCode,
             );
         }
 
@@ -183,7 +191,8 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
             message: $statusDescription,
             data: [
                 'handle' => $xml->filter('channel > order > details')->text(),
-            ]
+            ],
+            status: $statusCode,
         );
     }
 
@@ -204,9 +213,13 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
                 $identity->toArray()
             ));
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_IDENTITY_UPDATED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_IDENTITY_UPDATED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 
@@ -224,9 +237,13 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
                 'identity' => $handle,
             ]);
 
+        $statusCode = $this->getStatusCode($xml);
+        $statusDescription = $this->getStatusDescription($xml);
+
         return new OxxaResult(
-            success: $this->getStatusCode($xml) === StatusCode::STATUS_IDENTITY_DELETED,
-            message: $this->getStatusDescription($xml)
+            success: $statusCode === StatusCode::STATUS_IDENTITY_DELETED,
+            message: $statusDescription,
+            status: $statusCode,
         );
     }
 }
