@@ -19,7 +19,7 @@ class IdentityEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function list(IdentityListRequest $request = null): OxxaResult
+    public function list(?IdentityListRequest $request = null): OxxaResult
     {
         $xml = $this
             ->client

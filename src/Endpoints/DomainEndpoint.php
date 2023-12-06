@@ -47,7 +47,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function list(DomainListRequest $request = null): OxxaResult
+    public function list(?DomainListRequest $request = null): OxxaResult
     {
         $xml = $this
             ->client
@@ -408,7 +408,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function updateNameservers(Domain $domain, bool $dnssecDelete = null): OxxaResult
+    public function updateNameservers(Domain $domain, ?bool $dnssecDelete = null): OxxaResult
     {
         if (is_null($domain->tld) || is_null($domain->sld)) {
             return new OxxaResult(

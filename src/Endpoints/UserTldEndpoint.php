@@ -18,7 +18,7 @@ class UserTldEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function list(UserTldListRequest $request = null): OxxaResult
+    public function list(?UserTldListRequest $request = null): OxxaResult
     {
         $xml = $this
             ->client
