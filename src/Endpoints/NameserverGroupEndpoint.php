@@ -17,7 +17,7 @@ class NameserverGroupEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function list(NameserverGroupListRequest $request = null): OxxaResult
+    public function list(?NameserverGroupListRequest $request = null): OxxaResult
     {
         $xml = $this
             ->client

@@ -32,7 +32,7 @@ class OxxaResult
         return $this->status;
     }
 
-    public function getData(string $key = null): mixed
+    public function getData(?string $key = null): mixed
     {
         if (! is_null($key)) {
             return $this->data[$key] ?? null;

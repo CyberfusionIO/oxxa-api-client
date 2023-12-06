@@ -47,7 +47,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function list(DomainListRequest $request = null): OxxaResult
+    public function list(?DomainListRequest $request = null): OxxaResult
     {
         $xml = $this
             ->client
@@ -186,7 +186,14 @@ class DomainEndpoint extends Endpoint implements EndpointContract
         $statusDescription = $this->getStatusDescription($xml);
 
         return new OxxaResult(
-            success: $statusCode === StatusCode::STATUS_DOMAIN_REGISTER_REQUESTED,
+            success: in_array(
+                $statusCode,
+                [
+                    StatusCode::STATUS_DOMAIN_REGISTERED,
+                    StatusCode::STATUS_DOMAIN_REGISTER_REQUESTED,
+                ],
+                true
+            ),
             message: $statusDescription,
             status: $statusCode,
         );
@@ -401,7 +408,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
      *
      * @throws OxxaException
      */
-    public function updateNameservers(Domain $domain, bool $dnssecDelete = null): OxxaResult
+    public function updateNameservers(Domain $domain, ?bool $dnssecDelete = null): OxxaResult
     {
         if (is_null($domain->tld) || is_null($domain->sld)) {
             return new OxxaResult(
@@ -457,7 +464,16 @@ class DomainEndpoint extends Endpoint implements EndpointContract
         $statusDescription = $this->getStatusDescription($xml);
 
         return new OxxaResult(
-            success: $statusCode === StatusCode::STATUS_DOMAIN_TRANSFER_REQUESTED,
+            success: in_array(
+                $statusCode,
+                [
+                    StatusCode::STATUS_DOMAIN_TRANSFER_REQUESTED,
+                    StatusCode::STATUS_DOMAIN_TRANSFER_PENDING,
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED,
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED_ALTERNATIVE,
+                ],
+                true
+            ),
             message: $statusDescription,
             status: $statusCode,
         );

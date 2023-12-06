@@ -4,7 +4,9 @@ namespace Cyberfusion\Oxxa\Enum;
 
 class StatusCode
 {
-    public const STATUS_DOMAIN_REGISTER_REQUESTED = 'XMLOK 1';
+    public const STATUS_DOMAIN_REGISTERED = 'XMLOK 1';
+
+    public const STATUS_DOMAIN_REGISTER_REQUESTED = 'XMLPEN 1';
 
     public const STATUS_DOMAIN_AUTORENEW_CHANGED = 'XMLOK 2';
 
@@ -44,6 +46,10 @@ class StatusCode
 
     public const STATUS_DOMAIN_TRANSFER_REQUESTED = 'XMLPEN 3';
 
+    public const STATUS_DOMAIN_TRANSFERRED = 'XMLOK 17';
+
+    public const STATUS_DOMAIN_TRANSFERRED_ALTERNATIVE = 'XMLOK 76';
+
     public const STATUS_DOMAIN_TRANSFER_PENDING = 'XMLPEN 4';
 
     public const STATUS_DOMAIN_DELETED = 'XMLPEN 11';
@@ -61,4 +67,6 @@ class StatusCode
     public const STATUS_DNSSEC_DELETED = 'XMLOK 81';
 
     public const STATUS_DOMAIN_NOT_IN_ADMINISTRATION = 'XMLERR 24';
+
+    public const STATUS_INSUFFICIENT_FUNDS = 'XMLERR 87';
 }
