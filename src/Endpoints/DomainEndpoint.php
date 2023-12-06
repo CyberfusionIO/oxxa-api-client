@@ -186,7 +186,14 @@ class DomainEndpoint extends Endpoint implements EndpointContract
         $statusDescription = $this->getStatusDescription($xml);
 
         return new OxxaResult(
-            success: $statusCode === StatusCode::STATUS_DOMAIN_REGISTER_REQUESTED,
+            success: in_array(
+                $statusCode,
+                [
+                    StatusCode::STATUS_DOMAIN_REGISTERED,
+                    StatusCode::STATUS_DOMAIN_REGISTER_REQUESTED,
+                ],
+                true
+            ),
             message: $statusDescription,
             status: $statusCode,
         );
@@ -457,7 +464,16 @@ class DomainEndpoint extends Endpoint implements EndpointContract
         $statusDescription = $this->getStatusDescription($xml);
 
         return new OxxaResult(
-            success: $statusCode === StatusCode::STATUS_DOMAIN_TRANSFER_REQUESTED,
+            success: in_array(
+                $statusCode,
+                [
+                    StatusCode::STATUS_DOMAIN_TRANSFER_REQUESTED,
+                    StatusCode::STATUS_DOMAIN_TRANSFER_PENDING,
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED,
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED_ALTERNATIVE,
+                ],
+                true
+            ),
             message: $statusDescription,
             status: $statusCode,
         );
