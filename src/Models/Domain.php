@@ -50,7 +50,7 @@ class Domain implements Model
             'period' => $this->period,
             'autorenew' => $this->autoRenew,
             'lock' => $this->lock,
-            'use_trustee' => $this->useTrustee,
+            'usetrustee' => $this->useTrustee,
             'premium_price' => $this->premiumPrice,
             'execution_at' => $this->executionAt,
             'trans_epp' => $this->transferCode,
