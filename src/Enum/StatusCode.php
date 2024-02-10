@@ -52,6 +52,10 @@ class StatusCode
 
     public const STATUS_DOMAIN_TRANSFER_PENDING = 'XMLPEN 4';
 
+    public const STATUS_DOMAIN_TRANSFER_INVALID_EPP = 'XMLERR 64';
+
+    public const STATUS_DOMAIN_TRANSFER_UNABLE_LOCK = 'XMLERR 66';
+
     public const STATUS_DOMAIN_DELETED = 'XMLPEN 11';
 
     public const STATUS_DOMAIN_RESTORED = 'XMLPEN 12';
@@ -69,4 +73,8 @@ class StatusCode
     public const STATUS_DOMAIN_NOT_IN_ADMINISTRATION = 'XMLERR 24';
 
     public const STATUS_INSUFFICIENT_FUNDS = 'XMLERR 87';
+
+    public const STATUS_SSL_RETRIEVED = 'XMLOK 115';
+
+    public const STATUS_SSL_PRODUCTS_RETRIEVED = 'XMLOK 118';
 }

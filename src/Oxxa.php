@@ -14,7 +14,7 @@ class Oxxa implements OxxaClient
 {
     private const TIMEOUT = 180;
 
-    private const VERSION = '2.2.2';
+    private const VERSION = '2.3.0';
 
     private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
 
@@ -158,5 +158,10 @@ class Oxxa implements OxxaClient
     public function tld(): Endpoints\UserTldEndpoint
     {
         return new Endpoints\UserTldEndpoint($this);
+    }
+
+    public function products(): Endpoints\ProductEndpoint
+    {
+        return new Endpoints\ProductEndpoint($this);
     }
 }
