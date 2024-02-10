@@ -159,4 +159,9 @@ class Oxxa implements OxxaClient
     {
         return new Endpoints\UserTldEndpoint($this);
     }
+
+    public function products(): Endpoints\ProductEndpoint
+    {
+        return new Endpoints\ProductEndpoint($this);
+    }
 }
