@@ -2,9 +2,6 @@
     "preset": "laravel",
     "rules": {
         "array_indentation": false,
-        "phpdoc_align": false,
-        "trailing_comma_in_multiline": {
-            "elements": ["arrays", "match", "parameters"]
-        }
+        "phpdoc_align": false
     }
 }
