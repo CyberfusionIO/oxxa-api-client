@@ -3,6 +3,7 @@
 namespace Cyberfusion\Oxxa\Endpoints;
 
 use Cyberfusion\Oxxa\Contracts\Endpoint as EndpointContract;
+use Cyberfusion\Oxxa\DataTransferObjects\Price;
 use Cyberfusion\Oxxa\Enum\StatusCode;
 use Cyberfusion\Oxxa\Enum\Toggle;
 use Cyberfusion\Oxxa\Models\SslProduct;
@@ -11,11 +12,11 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ProductEndpoint extends Endpoint implements EndpointContract
 {
-    public function sslProducts(): OxxaResult
+    public function sslProducts(array $additionalParameters = []): OxxaResult
     {
         $xml = $this
             ->client
-            ->request(['command' => 'ssl_product_list']);
+            ->request(array_merge(['command' => 'ssl_product_list'], $additionalParameters));
 
         $statusCode = $this->getStatusCode($xml);
         $statusDescription = $this->getStatusDescription($xml);
@@ -36,10 +37,10 @@ class ProductEndpoint extends Endpoint implements EndpointContract
                     $sslNode
                         ->filter('pricing > period')
                         ->each(function (Crawler $periodNode) use (&$pricing) {
-                            $pricing[] = [
-                                'period' => (int) $periodNode->attr('months'),
-                                'price' => (float) $periodNode->filter('price')->text(),
-                            ];
+                            $pricing[] = new Price(
+                                period: (int) $periodNode->attr('months'),
+                                price: (float) $periodNode->filter('price')->text(),
+                            );
                         });
                 }
 
