@@ -37,9 +37,14 @@ class ProductEndpoint extends Endpoint implements EndpointContract
                     $sslNode
                         ->filter('pricing > period')
                         ->each(function (Crawler $periodNode) use (&$pricing) {
+                            $priceExtraDomainNode = $periodNode->filter('price_extra_domain');
+
                             $pricing[] = new Price(
                                 period: (int) $periodNode->attr('months'),
                                 price: (float) $periodNode->filter('price')->text(),
+                                priceAdditional: $priceExtraDomainNode->count() && $priceExtraDomainNode->text() !== ''
+                                    ? (float) $periodNode->filter('price_extra_domain')->text()
+                                    : null,
                             );
                         });
                 }
