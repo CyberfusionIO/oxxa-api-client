@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Please note this changelog affects 
 this package and not the Oxxa API.
 
+## [2.4.1]
+
+### Fixed
+
+- Add missing price for additional domains when retrieving SSL products.
+
 ## [2.4.0]
 
 ### Added
