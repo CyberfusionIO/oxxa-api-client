@@ -230,6 +230,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             data: [
                 'done' => $xml->filter('channel > order > done')->text() === 'TRUE',
                 'description' => $statusDescription,
+                'finished' => $statusCode === StatusCode::STATUS_DOMAIN_REGISTERED,
             ],
             status: $statusCode,
         );
@@ -510,9 +511,12 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             data: [
                 'done' => $xml->filter('channel > order > done')->text() === 'TRUE',
                 'description' => $statusDescription,
-                'code' => $statusCode,
+                'finished' => in_array($statusCode, [
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED,
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED_ALTERNATIVE,
+                ]),
             ],
-            status: $$statusCode,
+            status: $statusCode,
         );
     }
 
