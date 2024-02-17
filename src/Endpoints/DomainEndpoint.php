@@ -3,6 +3,7 @@
 namespace Cyberfusion\Oxxa\Endpoints;
 
 use Cyberfusion\Oxxa\Contracts\Endpoint as EndpointContract;
+use Cyberfusion\Oxxa\Enum\DomainStatus;
 use Cyberfusion\Oxxa\Enum\StatusCode;
 use Cyberfusion\Oxxa\Enum\Toggle;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
@@ -230,6 +231,7 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             data: [
                 'done' => $xml->filter('channel > order > done')->text() === 'TRUE',
                 'description' => $statusDescription,
+                'finished' => $statusCode === StatusCode::STATUS_DOMAIN_REGISTERED,
             ],
             status: $statusCode,
         );
@@ -510,9 +512,12 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             data: [
                 'done' => $xml->filter('channel > order > done')->text() === 'TRUE',
                 'description' => $statusDescription,
-                'code' => $statusCode,
+                'finished' => in_array($statusCode, [
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED,
+                    StatusCode::STATUS_DOMAIN_TRANSFERRED_ALTERNATIVE,
+                ]),
             ],
-            status: $$statusCode,
+            status: $statusCode,
         );
     }
 
