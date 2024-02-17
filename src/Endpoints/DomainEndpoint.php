@@ -3,7 +3,6 @@
 namespace Cyberfusion\Oxxa\Endpoints;
 
 use Cyberfusion\Oxxa\Contracts\Endpoint as EndpointContract;
-use Cyberfusion\Oxxa\Enum\DomainStatus;
 use Cyberfusion\Oxxa\Enum\StatusCode;
 use Cyberfusion\Oxxa\Enum\Toggle;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
