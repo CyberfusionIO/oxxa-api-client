@@ -3,6 +3,7 @@
 namespace Cyberfusion\Oxxa;
 
 use Cyberfusion\Oxxa\Contracts\OxxaClient;
+use Cyberfusion\Oxxa\Enum\StatusCode;
 use Cyberfusion\Oxxa\Exceptions\OxxaException;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
@@ -14,7 +15,7 @@ class Oxxa implements OxxaClient
 {
     private const TIMEOUT = 180;
 
-    private const VERSION = '2.5.0';
+    private const VERSION = '2.5.1';
 
     private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
 
@@ -109,23 +110,23 @@ class Oxxa implements OxxaClient
 
         $statusCode = $status->text();
         switch ($statusCode) {
-            case 'XMLERR 1':
+            case StatusCode::STATUS_INVALID_CREDENTIALS:
                 throw OxxaException::invalidCredentials($statusCode);
-            case 'XMLERR 24':
+            case StatusCode::STATUS_DOMAIN_NOT_IN_ADMINISTRATION:
                 throw OxxaException::restrictedDomain($statusCode);
-            case 'XMLERR 87':
+            case StatusCode::STATUS_INSUFFICIENT_FUNDS:
                 throw OxxaException::insufficientFunds($statusCode);
-            case 'XMLERR 11':
+            case StatusCode::STATUS_INVALID_ADMIN_IDENTITY:
                 throw OxxaException::invalidAdminIdentity($statusCode);
-            case 'XMLERR 12':
+            case StatusCode::STATUS_INVALID_TECH_IDENTITY:
                 throw OxxaException::invalidTechIdentity($statusCode);
-            case 'XMLERR 13':
+            case StatusCode::STATUS_INVALID_BILLING_IDENTITY:
                 throw OxxaException::invalidBillingIdentity($statusCode);
-            case 'XMLERR 14':
+            case StatusCode::STATUS_INVALID_REGISTRANT_IDENTITY:
                 throw OxxaException::invalidRegistrantIdentity($statusCode);
-            case 'XMLERR 15':
+            case StatusCode::STATUS_INVALID_NAME_SERVER_GROUP:
                 throw OxxaException::invalidNameServerGroup($statusCode);
-            case 'XMLERR 19':
+            case StatusCode::STATUS_DOMAIN_NOT_MUTATABLE:
                 throw OxxaException::domainTaken($statusCode);
         }
     }
