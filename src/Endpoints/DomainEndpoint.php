@@ -258,7 +258,9 @@ class DomainEndpoint extends Endpoint implements EndpointContract
             success: $statusCode === StatusCode::STATUS_DOMAIN_TOKEN_SENT,
             message: $statusDescription,
             data: [
-                'epp' => $xml->filter('channel > order > details')->text(),
+                'epp' => $xml->filter('channel > order > details')->count()
+                    ? $xml->filter('channel > order > details')->text()
+                    : null,
             ],
             status: $statusCode,
         );
