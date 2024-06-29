@@ -141,7 +141,7 @@ class DomainTest extends TestCase
                 Arr::get($request->data(), 'nsgroup') === 'ABCD123456' &&
                 Arr::get($request->data(), 'dnstemplate') === 'ABCD123456' &&
                 Arr::get($request->data(), 'lock') === 'Y' &&
-                Arr::get($request->data(), 'execution_at') === '2020-01-01' &&
+                Arr::get($request->data(), 'execution_at') === '01-01-2020' &&
                 Arr::get($request->data(), 'test') === null;
         });
     }
@@ -180,7 +180,7 @@ class DomainTest extends TestCase
                 Arr::get($request->data(), 'nsgroup') === 'ABCD123456' &&
                 Arr::get($request->data(), 'dnstemplate') === 'ABCD123456' &&
                 Arr::get($request->data(), 'lock') === 'Y' &&
-                Arr::get($request->data(), 'execution_at') === '2020-01-01' &&
+                Arr::get($request->data(), 'execution_at') === '01-01-2020' &&
                 Arr::get($request->data(), 'test') === null;
         });
     }
