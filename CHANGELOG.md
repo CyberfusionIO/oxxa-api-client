@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Please note this changelog affects 
 this package and not the Oxxa API.
 
+## [2.6.2]
+
+### Fixed
+
+- Fixed date format for the `execution_at` property of the Domain model.
+- Fixed date format for the `datebirth` and `idcarddate` property of the Identity model.
+
 ## [2.6.1]
 
 ### Fixed

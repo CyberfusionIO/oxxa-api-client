@@ -87,7 +87,9 @@ class Identity implements Model
             'tel' => $this->tel,
             'fax' => $this->fax,
             'email' => $this->email,
-            'datebirth' => $this->dateBirth,
+            'datebirth' => $this
+                ->dateBirth
+                ?->format('d-m-Y'),
             'placebirth' => $this->placeBirth,
             'countrybirth' => $this->countryBirth,
             'postalbirth' => $this->postalBirth,
@@ -96,7 +98,9 @@ class Identity implements Model
             'vatnumber' => $this->vatNumber,
             'tmnumber' => $this->trademarkNumber,
             'tmcountry' => $this->trademarkCountry,
-            'idcarddate' => $this->idCardDate,
+            'idcarddate' => $this
+                ->idCardDate
+                ?->format('d-m-Y'),
             'idcardissuer' => $this->idCardIssuer,
             'xxxmemberid' => $this->xxxMemberId,
             'xxxpassword' => $this->xxxPassword,

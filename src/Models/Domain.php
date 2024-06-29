@@ -52,7 +52,9 @@ class Domain implements Model
             'lock' => $this->lock,
             'usetrustee' => $this->useTrustee,
             'premium_price' => $this->premiumPrice,
-            'execution_at' => $this->executionAt,
+            'execution_at' => $this
+                ->executionAt
+                ?->format('d-m-Y'),
             'trans_epp' => $this->transferCode,
             'dnssec_delete' => $this->dnssecDelete,
         ]);
