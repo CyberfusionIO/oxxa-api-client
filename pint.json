@@ -3,6 +3,7 @@
     "rules": {
         "array_indentation": false,
         "phpdoc_align": false,
-        "single_line_empty_body": false
+        "single_line_empty_body": false,
+        "new_with_parentheses": false
     }
 }
