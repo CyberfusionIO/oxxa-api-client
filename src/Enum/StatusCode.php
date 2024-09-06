@@ -44,6 +44,10 @@ class StatusCode
 
     public const STATUS_DOMAIN_TRANSFERRED = 'XMLOK 17';
 
+    public const STATUS_TASK_LIST_RETRIEVED = 'XMLOK 22';
+
+    public const STATUS_TASK_RETRIEVED = 'XMLOK 48';
+
     public const STATUS_DOMAIN_TRANSFERRED_ALTERNATIVE = 'XMLOK 76';
 
     public const STATUS_GLUES_UPDATED = 'XMLOK 142';

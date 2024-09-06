@@ -15,7 +15,7 @@ class Oxxa implements OxxaClient
 {
     private const TIMEOUT = 180;
 
-    private const VERSION = '2.7.0';
+    private const VERSION = '2.8.0';
 
     private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
 
@@ -154,6 +154,11 @@ class Oxxa implements OxxaClient
     public function nameserverGroup(): Endpoints\NameserverGroupEndpoint
     {
         return new Endpoints\NameserverGroupEndpoint($this);
+    }
+
+    public function task(): Endpoints\TaskEndpoint
+    {
+        return new Endpoints\TaskEndpoint($this);
     }
 
     public function tld(): Endpoints\UserTldEndpoint
