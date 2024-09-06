@@ -14,7 +14,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class TaskEndpoint extends Endpoint implements EndpointContract
 {
     /**
-     * Returns all the available identities.
+     * Returns all the tasks.
      *
      * @throws OxxaException
      */
@@ -74,6 +74,11 @@ class TaskEndpoint extends Endpoint implements EndpointContract
         );
     }
 
+    /**
+     * Retrieve the task.
+     *
+     * @throws OxxaException
+     */
     public function get(int $taskId): OxxaResult
     {
         $xml = $this
