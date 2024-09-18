@@ -136,6 +136,9 @@ class DomainEndpoint extends Endpoint implements EndpointContract
                 ? Toggle::toBoolean($detailsNode->filter('usetrustee')->text())
                 : null,
             dnsSec: Toggle::toBoolean($detailsNode->filter('dnssec')->text()),
+            lock: $detailsNode->filter('lock')->count()
+                ? Toggle::toBoolean($detailsNode->filter('lock')->text())
+                : null,
         );
 
         return new OxxaResult(
