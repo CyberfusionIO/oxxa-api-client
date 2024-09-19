@@ -99,4 +99,6 @@ class StatusCode
     public const STATUS_INSUFFICIENT_FUNDS = 'XMLERR 87';
 
     public const STATUS_HELPDESK_NEEDED = 'XMLERR 184';
+
+    public const STATUS_EPP_REQUESTED_TOO_MANY_TIMES = 'XMLERR 263';
 }
