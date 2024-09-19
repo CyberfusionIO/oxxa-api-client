@@ -97,4 +97,6 @@ class StatusCode
     public const STATUS_DOMAIN_TRANSFER_UNABLE_LOCK = 'XMLERR 66';
 
     public const STATUS_INSUFFICIENT_FUNDS = 'XMLERR 87';
+
+    public const STATUS_HELPDESK_NEEDED = 'XMLERR 184';
 }
