@@ -65,9 +65,8 @@ This will return the Oxxa instance, so you can chain it with other methods.
 
 ### Exceptions
 
-In case of errors, the client throws the exception `OxxaException`. 
-
-All exceptions have a code. These can be found in the `OxxaException` class.
+In case of errors, the client throws exceptions using the `OxxaException` as base class. All exceptions have a specific 
+code. These can be found in the `OxxaException` class.
 
 ## Tests
 

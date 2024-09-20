@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Please note this changelog affects 
 this package and not the Oxxa API.
 
+## [2.11.0]
+
+### Added
+
+- Provide original status code and description when an exception is thrown.
+- Use separate exceptions to catch specific errors. You can keep catching the `OxxaException` to catch all exceptions of this package.
+- Add fallback to the `getData` method of the `OxxaResult`. This allows you to easily fall back to a specific value, i.e. `$oxxa->products()->sslProducts()->getData('products', []);`
+- Add several error codes regarding domain transfers.
+
 ## [2.10.0]
 
 ### Added
