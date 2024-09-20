@@ -4,7 +4,19 @@ namespace Cyberfusion\Oxxa;
 
 use Cyberfusion\Oxxa\Contracts\OxxaClient;
 use Cyberfusion\Oxxa\Enum\StatusCode;
-use Cyberfusion\Oxxa\Exceptions\OxxaException;
+use Cyberfusion\Oxxa\Exceptions\DomainNotInAdministrationException;
+use Cyberfusion\Oxxa\Exceptions\DomainNotMutatableException;
+use Cyberfusion\Oxxa\Exceptions\InsufficientFundsException;
+use Cyberfusion\Oxxa\Exceptions\InvalidAdminIdentityException;
+use Cyberfusion\Oxxa\Exceptions\InvalidBillingIdentityException;
+use Cyberfusion\Oxxa\Exceptions\InvalidCredentialsException;
+use Cyberfusion\Oxxa\Exceptions\InvalidNameserverGroupException;
+use Cyberfusion\Oxxa\Exceptions\InvalidRegistrantIdentityException;
+use Cyberfusion\Oxxa\Exceptions\InvalidTechIdentityException;
+use Cyberfusion\Oxxa\Exceptions\MissingPasswordException;
+use Cyberfusion\Oxxa\Exceptions\MissingUsernameException;
+use Cyberfusion\Oxxa\Exceptions\UnableToPerformRequestException;
+use Cyberfusion\Oxxa\Traits\ResponseParser;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Str;
@@ -13,16 +25,19 @@ use Throwable;
 
 class Oxxa implements OxxaClient
 {
+    use ResponseParser;
+
     private const TIMEOUT = 180;
 
-    private const VERSION = '2.10.0';
+    private const VERSION = '2.11.0';
 
     private const USER_AGENT = 'oxxa-api-client/'.self::VERSION;
 
     private string $baseUri = 'https://api.oxxa.com/command.php';
 
     /**
-     * @throws OxxaException
+     * @throws MissingUsernameException
+     * @throws MissingPasswordException
      */
     public function __construct(
         private readonly string $username,
@@ -31,10 +46,10 @@ class Oxxa implements OxxaClient
         private readonly Factory|PendingRequest|null $client = null,
     ) {
         if (Str::length($this->username) === 0) {
-            throw OxxaException::missingUsername();
+            throw new MissingUsernameException();
         }
         if (Str::length($this->password) === 0) {
-            throw OxxaException::missingPassword();
+            throw new MissingPasswordException();
         }
     }
 
@@ -62,7 +77,16 @@ class Oxxa implements OxxaClient
     /**
      * Perform the request.
      *
-     * @throws OxxaException
+     * @throws InvalidCredentialsException
+     * @throws DomainNotInAdministrationException
+     * @throws InsufficientFundsException
+     * @throws InvalidAdminIdentityException
+     * @throws InvalidTechIdentityException
+     * @throws InvalidBillingIdentityException
+     * @throws InvalidRegistrantIdentityException
+     * @throws InvalidNameserverGroupException
+     * @throws DomainNotMutatableException
+     * @throws UnableToPerformRequestException
      */
     public function request(array $parameters = []): Crawler
     {
@@ -87,7 +111,7 @@ class Oxxa implements OxxaClient
                 ->get('', $parameters)
                 ->throw();
         } catch (Throwable $throwable) {
-            throw OxxaException::unableToPerformRequest($throwable->getMessage());
+            throw new UnableToPerformRequestException($throwable->getMessage());
         }
 
         // Parse the response body as XML
@@ -102,32 +126,40 @@ class Oxxa implements OxxaClient
     /**
      * Checks the status code in the response and throws an exception if the status code represents a common error.
      *
-     * @throws OxxaException
+     * @throws InvalidCredentialsException
+     * @throws DomainNotInAdministrationException
+     * @throws InsufficientFundsException
+     * @throws InvalidAdminIdentityException
+     * @throws InvalidTechIdentityException
+     * @throws InvalidBillingIdentityException
+     * @throws InvalidRegistrantIdentityException
+     * @throws InvalidNameserverGroupException
+     * @throws DomainNotMutatableException
      */
     private function checkStatus(Crawler $crawler): void
     {
-        $status = $crawler->filter('channel > order > status_code');
+        $statusCode = $this->getStatusCode($crawler);
+        $statusMessage = $this->getStatusDescription($crawler);
 
-        $statusCode = $status->text();
         switch ($statusCode) {
             case StatusCode::STATUS_INVALID_CREDENTIALS:
-                throw OxxaException::invalidCredentials($statusCode);
+                throw new InvalidCredentialsException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_DOMAIN_NOT_IN_ADMINISTRATION:
-                throw OxxaException::restrictedDomain($statusCode);
+                throw new DomainNotInAdministrationException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_INSUFFICIENT_FUNDS:
-                throw OxxaException::insufficientFunds($statusCode);
+                throw new InsufficientFundsException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_INVALID_ADMIN_IDENTITY:
-                throw OxxaException::invalidAdminIdentity($statusCode);
+                throw new InvalidAdminIdentityException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_INVALID_TECH_IDENTITY:
-                throw OxxaException::invalidTechIdentity($statusCode);
+                throw new InvalidTechIdentityException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_INVALID_BILLING_IDENTITY:
-                throw OxxaException::invalidBillingIdentity($statusCode);
+                throw new InvalidBillingIdentityException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_INVALID_REGISTRANT_IDENTITY:
-                throw OxxaException::invalidRegistrantIdentity($statusCode);
+                throw new InvalidRegistrantIdentityException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_INVALID_NAME_SERVER_GROUP:
-                throw OxxaException::invalidNameServerGroup($statusCode);
+                throw new InvalidNameserverGroupException(statusCode: $statusCode, statusMessage: $statusMessage);
             case StatusCode::STATUS_DOMAIN_NOT_MUTATABLE:
-                throw OxxaException::domainTaken($statusCode);
+                throw new DomainNotMutatableException($statusCode, $statusMessage);
         }
     }
 

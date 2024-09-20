@@ -5,3 +5,4 @@ composer.lock
 .idea
 .phpunit.cache
 .DS_Store
+.phpactor.json

@@ -32,10 +32,10 @@ class OxxaResult
         return $this->status;
     }
 
-    public function getData(?string $key = null): mixed
+    public function getData(?string $key = null, mixed $fallback = null): mixed
     {
-        if (! is_null($key)) {
-            return $this->data[$key] ?? null;
+        if ($key !== null) {
+            return $this->data[$key] ?? $fallback;
         }
 
         return $this->data;
