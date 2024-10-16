@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Please note this changelog affects 
 this package and not the Oxxa API.
 
+## [2.12.0]
+
+### Added
+
+- Add missing status codes.
+
 ## [2.11.0]
 
 ### Added
